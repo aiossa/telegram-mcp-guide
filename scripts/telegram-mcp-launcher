@@ -1,0 +1,15 @@
+#!/bin/bash
+# Запуск telegram-mcp для Claude Code.
+# Берёт ключи из Связки ключей macOS и стартует сервер из ~/telegram-mcp.
+# Положить в ~/.local/bin/telegram-mcp-launcher и сделать исполняемым (chmod +x).
+
+export TELEGRAM_API_ID=$(security find-generic-password -a "api_id" -s "telegram-mcp" -w 2>/dev/null)
+export TELEGRAM_API_HASH=$(security find-generic-password -a "api_hash" -s "telegram-mcp" -w 2>/dev/null)
+export TELEGRAM_SESSION_STRING=$(security find-generic-password -a "session_string" -s "telegram-mcp" -w 2>/dev/null)
+
+if [ -z "$TELEGRAM_API_ID" ] || [ -z "$TELEGRAM_API_HASH" ] || [ -z "$TELEGRAM_SESSION_STRING" ]; then
+    echo "Ключи Telegram не найдены в Связке ключей (сервис telegram-mcp)" >&2
+    exit 1
+fi
+
+exec "$HOME/telegram-mcp/.venv/bin/python" "$HOME/telegram-mcp/main.py"
